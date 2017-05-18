@@ -1,13 +1,13 @@
 #-------------------------------------------------------------------------------
 # Name:        common_to_csv.py
-# Purpose:     Takes a Dojo NLS common.js file and outputs in to CSV.
-# Requires:    Python 3.x
+# Purpose:     Takes a Dojo NLS common.js file and outputs it to CSV.
+# Requires:    Python 3.6.x, codecs module, UTF-8 file encoding.
 # Usage:       common_to_csv.py -i <common.js file path> -o <output CSV file path>
 #
 # Author:      Dustin Evans
 #
 # Created:     15/05/2017
-# Copyright:   (c) Omnibond Systems, LLC.
+# Copyright:   (c) Omnibond Systems, LLC. 2017
 # Licence:     <your licence>
 #-------------------------------------------------------------------------------
 
@@ -35,7 +35,6 @@ def main(argv):
 
     if input_file is not None:
         common_dict = parse_common_file(input_file)
-        #print(sorted(common_dict.items(), key=operator.itemgetter(0)))
         csv_list = convert_to_list(common_dict)
         with codecs.open(output_file, mode='w', encoding='utf-8') as fp:
             writer = csv.DictWriter(fp, ['Label', 'Text', 'Translation'])
@@ -54,6 +53,8 @@ def parse_common_file(file_path):
             file_content = fp.read()
             valid_content = file_content[file_content.find("{"):file_content.rfind("}")+1]
             common_dict = json.loads(valid_content)
+            if 'root' in common_dict:
+                common_dict = common_dict['root']
     except IOError:
         print("ERROR: Couldn't open", file_path)
     except ValueError:
